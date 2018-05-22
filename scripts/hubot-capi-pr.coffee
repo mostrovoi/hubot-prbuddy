@@ -2,8 +2,8 @@
 #  This script shows open PRs based on a label to be filtered
 #
 #  Dependencies:
-#    "hubot": "2.5.5",
-#    "octokat": "^0.4.11",
+#    "hubot": "2.19.0",
+#    "octokat": "^0.10.0",
 #    "bluebird": "^3.5.1"
 #
 # Configuration:
