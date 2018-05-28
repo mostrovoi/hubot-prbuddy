@@ -9,7 +9,7 @@ class PullRequestService
     @allPrs =
       #repo.issues.fetch({label: ""})
       repo.pulls.fetch().then (prs) =>
-        Promise.all (prs.items.map (pr) -> repo.pulls(pr.number).reviews.fetch())
+        Promise.all (prs.items.map (pr) -> repo.pulls(pr.number).reviews.fetch()) 
 
   list: ->
     @repo.pulls.fetch()
@@ -23,11 +23,8 @@ class PullRequestService
   get: (number) ->
     @repo.pulls(number).fetch()
 
-  #getTotalByState: (reviews, state) ->
-  #  reviews.reduce (n, review) ->  
-  #     n + (review.state == state)
-  #     0
-
+  filterByState: (reviews, state) ->
+    reviews.filter (review) -> (review.state == state)
        
   getReviews: (pulls) =>
     Promise.all(pulls.map(pr) -> @repo.pulls(3190).reviews().fetch())
@@ -38,16 +35,30 @@ class PullRequestService
   getPRNumbers: (pulls) ->
     pr.number for pr in pulls
 
+  getItems: (pulls) ->
+    pr.items for pr in pulls
+
   generateSummary: ->
     @allPrs.then (pulls) =>
-      #if Object.keys(pulls.items).length > 0
-      if true
-           #totalApproved = @getTotalByState(reviews, 'APPROVED')
-       #prNumbers = @getPRNumbers (pulls)
+      if pulls.length > 0
+        collection = []
+        for pr in pulls
+           mypr: pr
+           passed: Object.keys(@filterByState(pr.items,"APPROVED")).length
+           
+           stats += "\n"
+           stats += "-------------------------"
+           
 
-        stats = "Summary of all open PRs\n\n"
-       # stats += "#{Object.keys(pulls.items).length}\n"
-        stats += JSON.stringify(pulls)
+        #totalApproved = @getTotalByState(pulls, 'APPROVED')
+       #prNumbers = @getPRNumbers (pulls)
+        items = @getItems(pulls)
+       # totalByState = @getTotalByState(pulls)
+       # stats = "Summary of all open PRs\n\n"
+        stats += "#{pulls.length}\n"
+       # stats += "TOTAL: #{totalByState}"
+        stats += "-------------------------"
+        #stats += JSON.stringify(items[1][1].state)
         stats += "\n"
         #stats += "#{prNumbers}"
        # stats += "\n"
